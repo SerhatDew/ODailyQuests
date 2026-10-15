@@ -1,11 +1,11 @@
 plugins {
     id 'java'
-    id 'com.gradleup.shadow' version '8.3.6'
+    id 'com.gradleup.shadow' version '8.3.11'
     id 'maven-publish'
 }
 
 group = 'com.ordwen'
-version="3.0.2"
+version="26.2"
 
 def ciVersion = System.getenv("ORG_GRADLE_PROJECT_version")
 if (ciVersion != null && !ciVersion.trim().isEmpty()) {
@@ -41,9 +41,34 @@ repositories {
     maven { url = 'https://repo.fancyinnovations.com/releases' }
     maven { url = 'https://repo.codemc.io/repository/EvenMoreFish/' }
     maven { url = 'https://jitpack.io' }
+    // The legacy NightExpress coordinates were removed from the publisher's Maven repository.
+    // Keep resolving the matching API jars from their immutable Modrinth release files.
+    ivy {
+        name = 'Modrinth-CoinsEngine'
+        url = 'https://cdn.modrinth.com/data/r0FB9U1e/versions'
+        patternLayout { artifact '[revision]/[artifact].[ext]' }
+        metadataSources { artifact() }
+    }
+    ivy {
+        name = 'Modrinth-ExcellentCrates'
+        url = 'https://cdn.modrinth.com/data/TdefKtjL/versions'
+        patternLayout { artifact '[revision]/[artifact].[ext]' }
+        metadataSources { artifact() }
+    }
+    ivy {
+        name = 'Modrinth-NightCore'
+        url = 'https://cdn.modrinth.com/data/Y4NRwMW5/versions'
+        patternLayout { artifact '[revision]/[artifact].[ext]' }
+        metadataSources { artifact() }
+    }
 }
 
 dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.mockito:mockito-core:5.20.0'
+    testImplementation 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
+    testImplementation 'com.zaxxer:HikariCP:5.0.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     /* database management */
     compileOnly 'com.zaxxer:HikariCP:5.0.1'
     compileOnly 'org.xerial:sqlite-jdbc:3.49.1.0'
@@ -64,7 +89,7 @@ dependencies {
     /* economy & points */
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'org.black_ixx:playerpoints:3.2.2'
-    compileOnly 'su.nightexpress.coinsengine:CoinsEngine:2.4.1'
+    compileOnly 'modrinth.coinsengine:CoinsEngine-2.4.1:mwfWMJ8S'
     compileOnly('com.github.Realizedd:TokenManager:3.2.4') { transitive = false }
 
     /* npcs */
@@ -111,13 +136,14 @@ dependencies {
     compileOnly 'com.github.NuVotifier:NuVotifier:2.7.2'
 
     /* crates */
-    compileOnly 'su.nightexpress.excellentcrates:ExcellentCrates:6.0.0'
+    compileOnly 'modrinth.excellentcrates:ExcellentCrates-6.0.0:9hmg1aTU'
+    compileOnly 'modrinth.nightcore:nightcore-2.7.3.2:XXpCRM0J'
 
     /* compatibility libs */
     compileOnly 'com.willfp:eco:6.76.2'
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     if (JavaVersion.current() < javaVersion) {
@@ -133,7 +159,7 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.shadowJar {
     archiveClassifier.set("")
-    archiveFileName.set("${project.name}-${project.version}.jar")
+    archiveFileName.set("${project.name}.jar")
     relocate 'io.papermc.lib', 'com.ordwen.odailyquests.lib.paperlib'
     relocate 'space.arim.morepaperlib', 'com.ordwen.odailyquests.lib.morepaperlib'
 }
@@ -153,6 +179,10 @@ tasks.build {
 
 tasks.jar {
     enabled = false
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 publishing {
