@@ -26,7 +26,7 @@ public class StructureGrowListener implements Listener {
             for (int i = 0; i < event.getBlocks().size(); i++) {
                 final Block block = event.getBlocks().get(i).getBlock();
                 final PersistentDataContainer pdc = new CustomBlockData(block, ODailyQuests.INSTANCE);
-                if (pdc.has(Antiglitch.PLACED_KEY)) {
+                if (pdc.has(Antiglitch.PLACED_KEY, org.bukkit.persistence.PersistentDataType.STRING)) {
                     Debugger.write("StructureGrowListener: block at coordinates " + block.getX() + ", " + block.getY() + ", " + block.getZ() + " is a placed block. Removing metadataKey.");
                     block.removeMetadata("odailyquests:placed", ODailyQuests.INSTANCE);
                 }

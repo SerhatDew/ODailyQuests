@@ -34,7 +34,7 @@ public class CustomBlockBreakListener extends PlayerProgressor implements Listen
 
         if (Antiglitch.isStorePlacedBlocks()) {
             final PersistentDataContainer pdc = new CustomBlockData(block, ODailyQuests.INSTANCE);
-            if (pdc.has(Antiglitch.PLACED_KEY)) {
+            if (pdc.has(Antiglitch.PLACED_KEY, org.bukkit.persistence.PersistentDataType.STRING)) {
                 valid.set(false);
             }
         }
