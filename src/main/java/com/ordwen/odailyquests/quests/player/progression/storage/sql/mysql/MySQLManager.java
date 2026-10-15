@@ -45,13 +45,21 @@ public class MySQLManager extends SQLManager {
     public void initHikariCP() {
         final HikariConfig hikariConfig = new HikariConfig();
 
+        hikariConfig.setPoolName("ODailyQuests-MySQLPool");
         hikariConfig.setMaximumPoolSize(10);
+        hikariConfig.setMinimumIdle(1);
         hikariConfig.setJdbcUrl(this.toUri());
         hikariConfig.setUsername(Database.getUser());
         hikariConfig.setPassword(Database.getPassword());
         hikariConfig.setMaxLifetime(300000L);
         hikariConfig.setLeakDetectionThreshold(10000L);
-        hikariConfig.setConnectionTimeout(10000L);
+        hikariConfig.setConnectionTimeout(5000L);
+        hikariConfig.setInitializationFailTimeout(5000L);
+
+        hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
+        hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+        hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
 
         super.hikariDataSource = new HikariDataSource(hikariConfig);
     }
@@ -66,10 +74,14 @@ public class MySQLManager extends SQLManager {
      */
     public void setupDatabase() {
         close();
-        initHikariCP();
-
-        testConnection();
-        setupTables();
+        try {
+            initHikariCP();
+            testConnection();
+            setupTables();
+        } catch (Exception e) {
+            close();
+            throw new IllegalStateException("Failed to initialize MySQL storage: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -78,7 +90,17 @@ public class MySQLManager extends SQLManager {
      * @return the JDBC URL used by the connection pool
      */
     private String toUri() {
-        return "jdbc:mysql://" + Database.getHost() + ":" + Database.getPort() + "/" + Database.getName();
+        final String host = Database.getHost();
+        final String port = Database.getPort();
+        final String name = Database.getName();
+        return "jdbc:mysql://" + host + ":" + port + "/" + name
+                + "?useSSL=false"
+                + "&allowPublicKeyRetrieval=true"
+                + "&autoReconnect=true"
+                + "&useUnicode=true"
+                + "&characterEncoding=UTF-8"
+                + "&serverTimezone=UTC";
     }
+
 
 }

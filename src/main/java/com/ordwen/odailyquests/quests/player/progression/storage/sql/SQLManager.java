@@ -17,7 +17,13 @@ public abstract class SQLManager {
     protected SaveProgressionSQL saveProgressionSQL;
 
     public void setupTables() {
-        try (final Connection connection = getConnection();
+        final Connection connection = getConnection();
+        if (connection == null) {
+            PluginLogger.error("Failed to setup database tables: Connection is null. Please verify your database configuration.");
+            throw new IllegalStateException("Failed to setup database tables: Connection is null.");
+        }
+
+        try (connection;
              final PreparedStatement playerStatement = connection.prepareStatement(Database.getMode() == StorageMode.MYSQL ? SQLQuery.MYSQL_CREATE_PLAYER_TABLE.getQuery() : SQLQuery.SQLITE_CREATE_PLAYER_TABLE.getQuery());
              final PreparedStatement progressionStatement = connection.prepareStatement(Database.getMode() == StorageMode.MYSQL ? SQLQuery.MYSQL_CREATE_PROGRESSION_TABLE.getQuery() : SQLQuery.SQLITE_CREATE_PROGRESSION_TABLE.getQuery());
              final PreparedStatement categoryStatsStatement = connection.prepareStatement(Database.getMode() == StorageMode.MYSQL ? SQLQuery.MYSQL_CREATE_PLAYER_CATEGORY_STATS_TABLE.getQuery() : SQLQuery.SQLITE_CREATE_PLAYER_CATEGORY_STATS_TABLE.getQuery())) {
@@ -32,7 +38,8 @@ public abstract class SQLManager {
             Debugger.write("Table odq_player_category_stats created or found in database.");
 
         } catch (SQLException e) {
-            PluginLogger.error(e.getMessage());
+            PluginLogger.error("Failed to setup database tables: " + e.getMessage());
+            throw new IllegalStateException("Failed to setup database tables: " + e.getMessage(), e);
         }
     }
 
@@ -72,14 +79,15 @@ public abstract class SQLManager {
      */
     protected void testConnection() {
         try (Connection con = getConnection()) {
-            if (con != null && con.isValid(1)) {
+            if (con != null && con.isValid(2)) {
                 PluginLogger.info("Plugin successfully connected to database.");
             } else {
                 PluginLogger.error("Impossible to connect to database, please check your configuration.");
+                throw new IllegalStateException("Database connection test failed. Connection is null or invalid.");
             }
         } catch (SQLException e) {
-            PluginLogger.error("Impossible to connect to database.");
-            PluginLogger.error(e.getMessage());
+            PluginLogger.error("Impossible to connect to database: " + e.getMessage());
+            throw new IllegalStateException("Impossible to connect to database: " + e.getMessage(), e);
         }
     }
 
