@@ -54,6 +54,26 @@ ODailyQuests is fully compiled with Java 25 bytecode target. Recommended startup
 java -Xms8G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -jar paper-26.2.jar --nogui
 ```
 
+## 🧩 Supported Integrations
+
+ODailyQuests natively hooks into popular modern plugins:
+
+- **Custom Items & Blocks**: ItemsAdder, Oraxen, Nexo
+- **Economy & Currencies**: Vault, CoinsEngine, EcoBits, PlayerPoints
+- **Custom Mobs**: MythicMobs, EliteMobs, LevelledMobs
+- **Crates & Rewards**: ExcellentCrates, GoldenCrates
+- **Fishing**: PyroFishingPro, CustomFishing
+
+## ⌨️ Commands & Permissions
+
+| Command | Description | Permission |
+| :--- | :--- | :--- |
+| `/quests` | Opens the personal daily quests interface | `odailyquests.use` |
+| `/quests show` | Shows active quests in chat/actionbar | `odailyquests.show` |
+| `/qadmin reload` | Safely reloads configurations and database pool | `odailyquests.admin` |
+| `/qadmin reset <player>` | Resets a specific player's daily quests | `odailyquests.admin` |
+| `/qadmin complete <player> <id>` | Force completes a quest for a player | `odailyquests.admin` |
+
 ## 📖 Documentation
 [Read the full Wiki](<https://ordwenplugins.gitbook.io/odailyquests/>) for setup, configuration, and examples.
 
