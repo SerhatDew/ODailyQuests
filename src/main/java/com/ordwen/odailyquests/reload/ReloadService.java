@@ -13,6 +13,7 @@ import com.ordwen.odailyquests.quests.player.PlayerQuests;
 import com.ordwen.odailyquests.quests.player.QuestsManager;
 import com.ordwen.odailyquests.tools.PluginLogger;
 import org.bukkit.Bukkit;
+import com.ordwen.odailyquests.tools.updater.database.DatabaseUpdateManager;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -53,6 +54,10 @@ public class ReloadService {
      * Save all quests from connected players, to avoid errors on reload.
      */
     public void saveConnectedPlayerQuests() {
+        saveConnectedPlayerQuests(false);
+    }
+
+    public void saveConnectedPlayerQuests(boolean synchronous) {
         final Map<String, PlayerQuests> activeQuests = new HashMap<>(QuestsManager.getActiveQuests());
         for (Map.Entry<String, PlayerQuests> entry : activeQuests.entrySet()) {
             final Player player = Bukkit.getPlayer(entry.getKey());
@@ -62,7 +67,9 @@ public class ReloadService {
                 continue;
             }
 
-            plugin.getDatabaseManager().saveProgressionForPlayer(player.getName(), player.getUniqueId().toString(), entry.getValue());
+            if (plugin.getDatabaseManager() != null) {
+                plugin.getDatabaseManager().saveProgressionForPlayer(player.getName(), player.getUniqueId().toString(), entry.getValue(), synchronous);
+            }
             QuestsManager.getActiveQuests().remove(entry.getKey());
         }
     }
@@ -72,6 +79,12 @@ public class ReloadService {
      */
     public void reload() {
         try {
+            /* save currently connected players to the active storage before reloading configs */
+            if (plugin.isEnabled() && plugin.getDatabaseManager() != null) {
+                saveConnectedPlayerQuests(true);
+                ODQReloadEvent.call(plugin, ReloadPhase.PLAYERS_SAVED);
+            }
+
             /* load files */
             plugin.getFilesManager().load();
             ODQReloadEvent.call(plugin, ReloadPhase.FILES_LOADED);
@@ -84,6 +97,9 @@ public class ReloadService {
             plugin.getDatabaseManager().load();
             ODQReloadEvent.call(plugin, ReloadPhase.DATABASE_LOADED);
 
+            /* apply database migrations to newly loaded storage */
+            new DatabaseUpdateManager(plugin).runUpdates();
+
             /* load quests & interface */
             if ((!ItemsAdderEnabled.isEnabled() || ItemsAdderEnabled.isLoaded())
                     && (!OraxenEnabled.isEnabled() || OraxenEnabled.isLoaded())
@@ -93,9 +109,6 @@ public class ReloadService {
                 plugin.getInterfacesManager().initAllObjects();
                 ODQReloadEvent.call(plugin, ReloadPhase.CONTENT_LOADED);
             }
-
-            saveConnectedPlayerQuests();
-            ODQReloadEvent.call(plugin, ReloadPhase.PLAYERS_SAVED);
 
             final boolean sendStatusOnReload = ReloadMessage.shouldSendOnReload();
             ODailyQuests.morePaperLib.scheduling().globalRegionalScheduler().runDelayed(() -> {
