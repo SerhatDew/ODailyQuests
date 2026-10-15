@@ -74,6 +74,26 @@ ODailyQuests natively hooks into popular modern plugins:
 | `/qadmin reset <player>` | Resets a specific player's daily quests | `odailyquests.admin` |
 | `/qadmin complete <player> <id>` | Force completes a quest for a player | `odailyquests.admin` |
 
+## 🛡️ Data Integrity & Troubleshooting
+
+### Automatic Migration
+When updating to v26.2, existing SQLite or MySQL schemas are automatically validated and migrated. No manual database alterations are required.
+
+### Fault-Tolerant Reloads
+When running `/qadmin reload`:
+1. The database pool status is verified first.
+2. Active quest sessions are held safely until new configuration parameters are validated.
+3. If configuration errors or database unreachable states are detected, the reload is aborted and the plugin shuts down gracefully rather than allowing desynchronized data persistence.
+
+### Debug Mode
+To diagnose quest trigger issues or third-party hook events, enable debug flags in `debug.yml`:
+```yaml
+debug:
+  database: false
+  events: false
+  rewards: false
+```
+
 ## 📖 Documentation
 [Read the full Wiki](<https://ordwenplugins.gitbook.io/odailyquests/>) for setup, configuration, and examples.
 
