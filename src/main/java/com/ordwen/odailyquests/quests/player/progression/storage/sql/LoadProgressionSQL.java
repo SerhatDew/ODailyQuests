@@ -78,7 +78,13 @@ public class LoadProgressionSQL extends ProgressionLoader {
             boolean hasStoredData = false;
             StoredPlayerProgression data = null;
 
-            try (final Connection connection = sqlManager.getConnection();
+            final Connection connection = sqlManager.getConnection();
+            if (connection == null) {
+                PluginLogger.error("Database connection unavailable while loading progression for player " + playerName + ". Aborting to prevent quest reset.");
+                return;
+            }
+
+            try (connection;
                  final PreparedStatement preparedStatement = connection.prepareStatement(SQLQuery.LOAD_PLAYER.getQuery())) {
 
                 preparedStatement.setString(1, playerUuid);
@@ -174,7 +180,13 @@ public class LoadProgressionSQL extends ProgressionLoader {
         final String playerName = player.getName();
         Debugger.write("Entering loadPlayerQuests method for player " + playerName + ".");
 
-        try (final Connection connection = sqlManager.getConnection();
+        final Connection connection = sqlManager.getConnection();
+        if (connection == null) {
+            PluginLogger.error("Database connection unavailable while loading quests for player " + playerName);
+            return false;
+        }
+
+        try (connection;
              final PreparedStatement preparedStatement = connection.prepareStatement(SQLQuery.LOAD_PROGRESS.getQuery())) {
 
             preparedStatement.setString(1, player.getUniqueId().toString());
@@ -343,7 +355,13 @@ public class LoadProgressionSQL extends ProgressionLoader {
     private Map<String, Integer> loadCategoryStats(String playerUuid) {
         final Map<String, Integer> categoryStats = new HashMap<>();
 
-        try (final Connection connection = sqlManager.getConnection();
+        final Connection connection = sqlManager.getConnection();
+        if (connection == null) {
+            PluginLogger.error("Database connection unavailable while loading category stats for player " + playerUuid);
+            return categoryStats;
+        }
+
+        try (connection;
              final PreparedStatement statement = connection.prepareStatement(SQLQuery.LOAD_PLAYER_CATEGORY_STATS.getQuery())) {
 
             statement.setString(1, playerUuid);

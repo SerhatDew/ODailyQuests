@@ -22,4 +22,22 @@ class DatabaseManagerTest {
             assertNull(manager.getYamlManager());
         }
     }
+
+    @Test
+    void saveProgressionForPlayerDoesNotThrowWhenStorageUninitialized() {
+        try (MockedStatic<Database> database = mockStatic(Database.class)) {
+            database.when(Database::getMode).thenReturn(com.ordwen.odailyquests.enums.StorageMode.MYSQL);
+            DatabaseManager manager = new DatabaseManager(null);
+            assertDoesNotThrow(() -> manager.saveProgressionForPlayer("TestPlayer", "dummy-uuid", null, true));
+        }
+    }
+
+    @Test
+    void loadQuestsForPlayerDoesNotThrowWhenStorageUninitialized() {
+        try (MockedStatic<Database> database = mockStatic(Database.class)) {
+            database.when(Database::getMode).thenReturn(com.ordwen.odailyquests.enums.StorageMode.MYSQL);
+            DatabaseManager manager = new DatabaseManager(null);
+            assertDoesNotThrow(() -> manager.loadQuestsForPlayer("TestPlayer", false));
+        }
+    }
 }

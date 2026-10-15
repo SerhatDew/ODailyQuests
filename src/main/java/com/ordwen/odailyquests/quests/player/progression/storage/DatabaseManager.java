@@ -68,15 +68,24 @@ public class DatabaseManager {
     }
 
     public void saveProgressionForPlayer(String playerName, String playerUuid, PlayerQuests playerQuests) {
+        saveProgressionForPlayer(playerName, playerUuid, playerQuests, plugin.isServerStopping());
+    }
+
+    public void saveProgressionForPlayer(String playerName, String playerUuid, PlayerQuests playerQuests, boolean synchronous) {
         switch (Database.getMode()) {
-            case YAML ->
-                    yamlManager.getSaveProgressionYAML().saveProgression(playerName, playerUuid, playerQuests, plugin.isServerStopping());
+            case YAML -> {
+                if (yamlManager == null || yamlManager.getSaveProgressionYAML() == null) {
+                    PluginLogger.error("Impossible to save player quests because the YAML storage is not initialized.");
+                    return;
+                }
+                yamlManager.getSaveProgressionYAML().saveProgression(playerName, playerUuid, playerQuests, synchronous || plugin.isServerStopping());
+            }
             case MYSQL, SQLITE -> {
                 if (sqlManager == null || sqlManager.getSaveProgressionSQL() == null) {
                     PluginLogger.error("Impossible to save player quests because the SQL storage is not initialized.");
                     return;
                 }
-                sqlManager.getSaveProgressionSQL().saveProgression(playerName, playerUuid, playerQuests, plugin.isServerStopping());
+                sqlManager.getSaveProgressionSQL().saveProgression(playerName, playerUuid, playerQuests, synchronous || plugin.isServerStopping());
             }
             default ->
                     PluginLogger.error("Impossible to save player quests : the selected storage mode is incorrect !");
