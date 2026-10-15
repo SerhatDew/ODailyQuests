@@ -8,7 +8,7 @@ O'DailyQuests is a powerful and easy-to-use **daily quests plugin** for Minecraf
 Every day, players receive new **random quests** to complete, each rewarding them with customizable prizes.
 Perfect for increasing player engagement and server retention!
 
-## 🚀 Features & Highlights (v26.2)
+## Features & Highlights (v26.2)
 
 - **Java 25 Ready**: Built and optimized for modern Java 25 runtimes with up-to-date Gradle 9 toolchains.
 - **Paper 26.2 & Modern Minecraft**: Fully compatible with modern Paper builds, utilizing up-to-date PersistentDataContainer types and clean chat component handling.
@@ -17,7 +17,7 @@ Perfect for increasing player engagement and server retention!
   - Safe plugin shutdown and reload protection to ensure player quest progression is never saved in an incomplete state.
 - **High Performance**: Minimal overhead with optimized event listeners and cached data structures.
 
-## 🌐 Multi-Server & Network Setup
+## Multi-Server & Network Setup
 
 ODailyQuests supports multi-server setups (Velocity / BungeeCord / Waterfall networks) where multiple Paper instances share player quest progress through a centralized MySQL/MariaDB database.
 
@@ -40,7 +40,7 @@ database:
 - **Player Switch / Quit**: On server switch or disconnect, current quest progress is safely persisted to the database before the player loads on the target server.
 - **Network Fail-Safe**: If a database outage occurs, ODailyQuests enters a safe mode to prevent saving empty/corrupted records over existing player progress.
 
-## ⚙️ Requirements & Compatibility
+## Requirements & Compatibility
 
 | Component | Recommended | Minimum |
 | :--- | :--- | :--- |
@@ -54,7 +54,7 @@ ODailyQuests is fully compiled with Java 25 bytecode target. Recommended startup
 java -Xms8G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -jar paper-26.2.jar --nogui
 ```
 
-## 🧩 Supported Integrations
+## Supported Integrations
 
 ODailyQuests natively hooks into popular modern plugins:
 
@@ -64,7 +64,7 @@ ODailyQuests natively hooks into popular modern plugins:
 - **Crates & Rewards**: ExcellentCrates, GoldenCrates
 - **Fishing**: PyroFishingPro, CustomFishing
 
-## ⌨️ Commands & Permissions
+## Commands & Permissions
 
 | Command | Description | Permission |
 | :--- | :--- | :--- |
@@ -74,7 +74,7 @@ ODailyQuests natively hooks into popular modern plugins:
 | `/qadmin reset <player>` | Resets a specific player's daily quests | `odailyquests.admin` |
 | `/qadmin complete <player> <id>` | Force completes a quest for a player | `odailyquests.admin` |
 
-## 🛡️ Data Integrity & Troubleshooting
+## Data Integrity & Troubleshooting
 
 ### Automatic Migration
 When updating to v26.2, existing SQLite or MySQL schemas are automatically validated and migrated. No manual database alterations are required.
@@ -94,24 +94,24 @@ debug:
   rewards: false
 ```
 
-## 📖 Documentation
+## Documentation
 [Read the full Wiki](<https://ordwenplugins.gitbook.io/odailyquests/>) for setup, configuration, and examples.
 
-## 💬 Community
+## Community
 Need help or want to share feedback? [Join our Discord](<https://discord.gg/Q8sw5KFvqg](https://discord.com/invite/NPAUE7kTgJ>).
 
-## 🔗 Downloads
-- 📥 **Spigot resource page**: [O'DailyQuests on SpigotMC](<https://www.spigotmc.org/resources/odailyquests-daily-quests-plugin-1-16-1-19.100990/>)
-- 📥 **Modrinth resource page**: [O'DailyQuests on Modrinth](<https://modrinth.com/plugin/odailyquests>)
-- 🧩 **Addons**:
+## Downloads
+- **Spigot resource page**: [O'DailyQuests on SpigotMC](<https://www.spigotmc.org/resources/odailyquests-daily-quests-plugin-1-16-1-19.100990/>)
+- **Modrinth resource page**: [O'DailyQuests on Modrinth](<https://modrinth.com/plugin/odailyquests>)
+- **Addons**:
   - [PyroFishingPro Support](<https://github.com/Ordwen/ODQ-PyroFishingPro/releases>)
 
-## ☕ Support the project
+## Support the project
 If you enjoy O'DailyQuests and want to support future development, you can:
 
 - [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I41CRIJI)  
 - [![PayPal](https://img.shields.io/badge/PayPal-Donate-blue?logo=paypal&style=flat-square)](https://www.paypal.com/paypalme/ordwen)  
 
-⭐ Don’t forget to **leave a 5-star review on [SpigotMC](https://www.spigotmc.org/resources/odailyquests-daily-quests-plugin-1-16-1-19.100990/reviews/)** — it really helps the project grow!
+Don't forget to **leave a 5-star review on [SpigotMC](https://www.spigotmc.org/resources/odailyquests-daily-quests-plugin-1-16-1-19.100990/reviews/)** — it really helps the project grow!
 
 
