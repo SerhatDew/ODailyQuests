@@ -17,6 +17,29 @@ Perfect for increasing player engagement and server retention!
   - Safe plugin shutdown and reload protection to ensure player quest progression is never saved in an incomplete state.
 - **High Performance**: Minimal overhead with optimized event listeners and cached data structures.
 
+## 🌐 Multi-Server & Network Setup
+
+ODailyQuests supports multi-server setups (Velocity / BungeeCord / Waterfall networks) where multiple Paper instances share player quest progress through a centralized MySQL/MariaDB database.
+
+### 1. Database Configuration
+In your `config.yml`, configure the database section to point to your shared database:
+
+```yaml
+database:
+  type: MYSQL
+  host: "127.0.0.1"
+  port: 3306
+  database: "odailyquests"
+  user: "minecraft"
+  password: "your_secure_password"
+  table_prefix: "odq_"
+```
+
+### 2. Synchronization Flow
+- **Player Join**: Player quests and progression are retrieved directly from the shared SQL database.
+- **Player Switch / Quit**: On server switch or disconnect, current quest progress is safely persisted to the database before the player loads on the target server.
+- **Network Fail-Safe**: If a database outage occurs, ODailyQuests enters a safe mode to prevent saving empty/corrupted records over existing player progress.
+
 ## 📖 Documentation
 [Read the full Wiki](<https://ordwenplugins.gitbook.io/odailyquests/>) for setup, configuration, and examples.
 
