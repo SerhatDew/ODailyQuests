@@ -40,6 +40,20 @@ database:
 - **Player Switch / Quit**: On server switch or disconnect, current quest progress is safely persisted to the database before the player loads on the target server.
 - **Network Fail-Safe**: If a database outage occurs, ODailyQuests enters a safe mode to prevent saving empty/corrupted records over existing player progress.
 
+## ⚙️ Requirements & Compatibility
+
+| Component | Recommended | Minimum |
+| :--- | :--- | :--- |
+| **Java** | **Java 25** (OpenJDK / GraalVM) | Java 21 |
+| **Server Software** | **Paper 26.2+** / Purpur 1.21.x | Paper 1.20+ |
+| **Database (Multi-Server)** | MySQL 8.0+ / MariaDB 10.6+ | SQLite (Single Server) |
+
+### Java 25 JVM Flags
+ODailyQuests is fully compiled with Java 25 bytecode target. Recommended startup flags for high-load multi-server instances:
+```bash
+java -Xms8G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -jar paper-26.2.jar --nogui
+```
+
 ## 📖 Documentation
 [Read the full Wiki](<https://ordwenplugins.gitbook.io/odailyquests/>) for setup, configuration, and examples.
 
