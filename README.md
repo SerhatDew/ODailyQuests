@@ -8,6 +8,15 @@ O'DailyQuests is a powerful and easy-to-use **daily quests plugin** for Minecraf
 Every day, players receive new **random quests** to complete, each rewarding them with customizable prizes.
 Perfect for increasing player engagement and server retention!
 
+## 🚀 Features & Highlights (v26.2)
+
+- **Java 25 Ready**: Built and optimized for modern Java 25 runtimes with up-to-date Gradle 9 toolchains.
+- **Paper 26.2 & Modern Minecraft**: Fully compatible with modern Paper builds, utilizing up-to-date PersistentDataContainer types and clean chat component handling.
+- **Multi-Server & Network Resilient**: Enhanced MySQL and SQLite storage management designed for multi-server networks:
+  - Failsafe database handling preventing data corruption if a backend node is temporarily unreachable.
+  - Safe plugin shutdown and reload protection to ensure player quest progression is never saved in an incomplete state.
+- **High Performance**: Minimal overhead with optimized event listeners and cached data structures.
+
 ## 📖 Documentation
 [Read the full Wiki](<https://ordwenplugins.gitbook.io/odailyquests/>) for setup, configuration, and examples.
 
