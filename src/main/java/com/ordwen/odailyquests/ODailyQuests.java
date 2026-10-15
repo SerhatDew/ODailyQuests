@@ -289,9 +289,11 @@ public final class ODailyQuests extends JavaPlugin {
         }
 
         /* Avoid errors on reload */
-        reloadService.saveConnectedPlayerQuests();
-
-        databaseManager.close();
+        try {
+            if (reloadService != null) reloadService.saveConnectedPlayerQuests();
+        } finally {
+            if (databaseManager != null) databaseManager.close();
+        }
         PluginLogger.info("Plugin is shutting down...");
     }
 

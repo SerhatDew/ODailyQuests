@@ -28,10 +28,16 @@ public class DatabaseManager {
         this.sqlManager = null;
         this.yamlManager = null;
 
-        switch (Database.getMode()) {
-            case MYSQL -> this.sqlManager = new MySQLManager();
-            case SQLITE -> this.sqlManager = new SQLiteManager();
-            case YAML -> this.yamlManager = new YamlManager(plugin.getFilesManager().getProgressionFile());
+        try {
+            switch (Database.getMode()) {
+                case MYSQL -> this.sqlManager = new MySQLManager();
+                case SQLITE -> this.sqlManager = new SQLiteManager();
+                case YAML -> this.yamlManager = new YamlManager(plugin.getFilesManager().getProgressionFile());
+            }
+        } catch (RuntimeException exception) {
+            this.sqlManager = null;
+            this.yamlManager = null;
+            throw new IllegalStateException("Failed to initialize quest storage. Check the configuration and database connection.", exception);
         }
     }
 
@@ -49,7 +55,13 @@ public class DatabaseManager {
         final Map<String, PlayerQuests> activeQuests = QuestsManager.getActiveQuests();
         switch (Database.getMode()) {
             case YAML -> yamlManager.getLoadProgressionYAML().loadPlayerQuests(playerName, activeQuests, sendStatusMessage);
-            case MYSQL, SQLITE -> sqlManager.getLoadProgressionSQL().loadProgression(playerName, activeQuests, sendStatusMessage);
+            case MYSQL, SQLITE -> {
+                if (sqlManager == null || sqlManager.getLoadProgressionSQL() == null) {
+                    PluginLogger.error("Impossible to load player quests because the SQL storage is not initialized.");
+                    return;
+                }
+                sqlManager.getLoadProgressionSQL().loadProgression(playerName, activeQuests, sendStatusMessage);
+            }
             default ->
                     PluginLogger.error("Impossible to load player quests : the selected storage mode is incorrect !");
         }
@@ -59,8 +71,13 @@ public class DatabaseManager {
         switch (Database.getMode()) {
             case YAML ->
                     yamlManager.getSaveProgressionYAML().saveProgression(playerName, playerUuid, playerQuests, plugin.isServerStopping());
-            case MYSQL, SQLITE ->
-                    sqlManager.getSaveProgressionSQL().saveProgression(playerName, playerUuid, playerQuests, plugin.isServerStopping());
+            case MYSQL, SQLITE -> {
+                if (sqlManager == null || sqlManager.getSaveProgressionSQL() == null) {
+                    PluginLogger.error("Impossible to save player quests because the SQL storage is not initialized.");
+                    return;
+                }
+                sqlManager.getSaveProgressionSQL().saveProgression(playerName, playerUuid, playerQuests, plugin.isServerStopping());
+            }
             default ->
                     PluginLogger.error("Impossible to save player quests : the selected storage mode is incorrect !");
         }

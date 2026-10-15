@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class ReloadService {
 
@@ -104,8 +105,9 @@ public class ReloadService {
 
             ODQReloadEvent.call(plugin, ReloadPhase.RELOAD_COMPLETE);
         } catch (Exception e) {
-            PluginLogger.error("An error occurred while reloading the plugin. Please check the logs for details.");
-            PluginLogger.error(e.getMessage());
+            plugin.getLogger().log(Level.SEVERE,
+                    "Failed to initialize or reload ODailyQuests. Disabling the plugin to prevent access to incomplete quest storage.", e);
+            plugin.getServer().getPluginManager().disablePlugin(plugin);
         }
     }
 }

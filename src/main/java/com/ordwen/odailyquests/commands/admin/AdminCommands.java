@@ -71,7 +71,7 @@ public class AdminCommands implements CommandExecutor {
     private boolean handleSingleArg(CommandSender sender, String subcommand) {
         if ("reload".equalsIgnoreCase(subcommand)) {
             plugin.getReloadService().reload();
-            sendMessage(sender, QuestsMessages.PLUGIN_RELOADED);
+            if (plugin.isEnabled()) sendMessage(sender, QuestsMessages.PLUGIN_RELOADED);
             return true;
         }
 
